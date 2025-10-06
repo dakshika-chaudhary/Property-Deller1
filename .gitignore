@@ -1,0 +1,13 @@
+my-project/node_modules/
+backend/node_modules/
+backend/.env/
+my-project/.env/
+
+ml/__pycache__/
+ml/.venv/
+ml/propert_price.model.pkl/
+
+
+data/*.csv
+
+
