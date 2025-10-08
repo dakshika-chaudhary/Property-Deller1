@@ -1,20 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef,useState } from "react";
 
 const Chatbot = ({ userId }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+const [listening, setListening] = useState(false);
 
-  const handleSend = async () => {
-    if (!query.trim()) return;
-    setMessages((prev) => [...prev, { sender: "user", text: query }]);
+const chatEndRef = useRef(null);
+
+useEffect(()=>{
+  chatEndRef.current?.scrollIntoView(
+    {behavior:"smooth"}
+  )
+},[messages]);
+
+const startListening = () => {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Your browser does not support voice input.");
+    return;
+  }
+    setListening(true);
+  const recognition =  new SpeechRecognition();
+  recognition.lang = "en-US";
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    setQuery(transcript)
+    handleSend(transcript);
+  }
+    recognition.onend = () => setListening(false); // reset state when done
+    recognition.start();
+};
+
+
+  const handleSend = async (voiceQuery) => {
+    // if (!query.trim()) return;
+      const finalQuery = voiceQuery || query;
+        if (!finalQuery.trim()) return;
+
+    setMessages((prev) => [...prev, { sender: "user", text: finalQuery }]);
     setLoading(true);
 
     try {
       const response = await fetch("http://localhost:5000/api/chatbot/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, question: query }),
+        body: JSON.stringify({ userId, question: finalQuery }),
       });
       const data = await response.json();
 
@@ -63,7 +97,7 @@ const Chatbot = ({ userId }) => {
           </div>
         ))}
       </div>
-
+<div ref={chatEndRef}></div>
       <div className="flex">
         <input
           type="text"
@@ -79,6 +113,8 @@ const Chatbot = ({ userId }) => {
         >
           {loading ? "Thinking..." : "Send"}
         </button>
+        <button onClick={startListening}>🎤 Speak</button>
+
       </div>
     </div>
   );
