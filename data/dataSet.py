@@ -56,6 +56,8 @@ print("After Cleaning:")
 print(df.info())
 print(df.head())
 
-unique_values = df['Ownership'].unique()
-print(unique_values)
-print(f"Total unique values: {len(unique_values)}")
+print(df.columns)
+
+# unique_values = df['Ownership'].unique()
+# print(unique_values)
+# print(f"Total unique values: {len(unique_values)}")

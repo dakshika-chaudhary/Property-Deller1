@@ -62,3 +62,7 @@ def predict_price(data: HouseData):
     prediction = model.predict(X_processed)[0]
 
     return {"Predicted Price (in rupees)": round(prediction, 2)}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

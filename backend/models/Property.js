@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const PropertySchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  // user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+   userId: { type: String, required: true },
   location: { type: String, required: true },
   status: String,
   floor: String,

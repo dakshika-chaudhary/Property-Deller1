@@ -16,6 +16,9 @@ router.post("/predict",async(req,res)=>{
 
 router.post("/save",async(req,res)=>{
     try{
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: "Invalid or missing userId" });
+
        const property = new Property(req.body);
        await property.save();
        res.json({ message: "Property saved successfully", property });
@@ -25,5 +28,20 @@ router.post("/save",async(req,res)=>{
        res.status(500).json({ error: "Saving failed" }); 
     }
 })
+
+// GET properties by userId
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) return res.status(400).json({ error: "Invalid userId" });
+
+    const properties = await Property.find({ userId }).sort({ createdAt: -1 });
+    res.json({ properties });
+  } catch (err) {
+    console.error("Error fetching properties:", err);
+    res.status(500).json({ error: "Failed to fetch properties" });
+  }
+});
+
 
 module.exports = router;

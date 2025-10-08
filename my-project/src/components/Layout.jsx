@@ -4,13 +4,22 @@ import Navbar from "./Navbar";
 import { FaBars, FaHome, FaBuilding, FaDollarSign, FaUser, FaCog, FaInfoCircle, FaClipboardList } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
 
 const Layout = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isLoaded, isSignedIn, user } = useUser();
+  
+  const userId = isLoaded && isSignedIn ? user.id : null;
+    
 
     const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
-    { name: "Properties", icon: <FaBuilding />, path: "/properties" },
+{
+      name: "Properties",
+      icon: <FaBuilding />,
+      path: userId ? `/properties/${userId}` : "#", // ✅ safely handle if not logged in
+    },
     { name: "Pricing", icon: <FaDollarSign />, path: "/pricing" },
     { name: "Profile", icon: <FaUser />, path: "/profile" },
     { name: "Subscription", icon: <FaClipboardList />, path: "/subscription" },
