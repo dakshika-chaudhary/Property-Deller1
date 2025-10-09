@@ -239,14 +239,19 @@ const Dashboard = () => {
     setLoading(true);
     setPredictedPrice(null);
     try {
-      const response = await fetch("http://127.0.0.1:8000/predict", {
+      const response = await fetch("http://localhost:5000/api/property/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await response.json();
-      const price = data["Predicted Price (in rupees)"] || "N/A";
-      setPredictedPrice(price);
+     let price;
+  if (data["Predicted Price (in rupees)"] !== undefined) price = data["Predicted Price (in rupees)"];
+else if (data.predictedPrice !== undefined) price = data.predictedPrice;
+else price = "N/A";
+
+setPredictedPrice(price);
+
       setShowFullPagePrice(true);
 
       setTimeout(() => setShowFullPagePrice(false), 3000);
@@ -268,12 +273,15 @@ const Dashboard = () => {
       return;
     }
     try {
-      const propertyData = { ...formData, predictedPrice, userId: user.id };
-      const response = await fetch("http://localhost:5000/api/property/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(propertyData),
-      });
+      const propertyData = { ...formData, userId: user?.id };
+const response = await fetch("http://localhost:5000/api/property/save", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(propertyData),
+});
+
+
+
       const data = await response.json();
       if (response.ok) alert("✅ Property saved successfully!");
       else alert("❌ Failed to save property: " + data.error);

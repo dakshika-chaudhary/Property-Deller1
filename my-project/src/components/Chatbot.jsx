@@ -37,18 +37,18 @@ const startListening = () => {
 
 
   const handleSend = async (voiceQuery) => {
-    // if (!query.trim()) return;
-      const finalQuery = voiceQuery || query;
-        if (!finalQuery.trim()) return;
+    if (!query.trim()) return;
+      // const finalQuery = voiceQuery || query;
+      //   if (!finalQuery.trim()) return;
 
-    setMessages((prev) => [...prev, { sender: "user", text: finalQuery }]);
+    setMessages((prev) => [...prev, { sender: "user", text: query }]);
     setLoading(true);
 
     try {
       const response = await fetch("http://localhost:5000/api/chatbot/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, question: finalQuery }),
+        body: JSON.stringify({ userId, question: query }),
       });
       const data = await response.json();
 
