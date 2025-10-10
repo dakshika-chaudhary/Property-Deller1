@@ -2,9 +2,7 @@
 
 import React, { useState } from "react";
 import Layout from "../components/Layout";
-import Chatbot from "../components/Chatbot";
 import { useUser } from "@clerk/clerk-react";
-import RecommendedProperties from "../components/RecommendedProperties";
 
 const Dashboard = () => {
   const { user } = useUser();

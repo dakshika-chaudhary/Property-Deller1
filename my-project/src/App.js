@@ -2,7 +2,6 @@
 import './App.css';
 import { SignedIn, SignedOut, RedirectToSignIn, SignIn, UserProfile } from "@clerk/clerk-react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignInPage from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import Home from './pages/Home';
 import Layout from './components/Layout';
@@ -21,7 +20,6 @@ function App() {
         <Route path='/ai' element={<Layout/>}></Route>
         <Route path='/dashboard/:id' element={<Dashboard/>}></Route>
         <Route path="/properties/:id" element={<UserProperties />} />
-         <Route path='/signIn' element={<SignInPage/>}></Route>
         <Route path='/chatbot' element={<ChatBot/>}></Route>
          <Route path='/subscription' element={<Plan/>}></Route>
           <Route path='/about' element={<About/>}></Route>

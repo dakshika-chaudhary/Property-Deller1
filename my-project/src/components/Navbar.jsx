@@ -2,7 +2,6 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import {useClerk,UserButton,useUser} from '@clerk/clerk-react'
 import { Link } from "react-router-dom";
-import ChatBot from '../pages/ChatBot';
 
 const Navbar = () =>{
     // const navigate = useNavigate()
