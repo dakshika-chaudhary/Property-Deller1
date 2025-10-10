@@ -54,6 +54,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Layout from "../../../components/Layout";
 
 const UserProperties = () => {
   const { id } = useParams();
@@ -90,6 +91,7 @@ const UserProperties = () => {
     );
 
   return (
+    <Layout>
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-8 text-center text-indigo-700">
         🏡 Your Saved Properties
@@ -131,6 +133,7 @@ const UserProperties = () => {
         ))}
       </div>
     </div>
+    </Layout>
   );
 };
 

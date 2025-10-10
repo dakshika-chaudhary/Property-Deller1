@@ -115,6 +115,24 @@ router.get("/user/:userId", async (req, res) => {
 });
 
 
+router.get("/trending",async(req,res)=>{
+  try{
+const sevenDaysAgo = new Date();
+sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const trending = await Property.find({ createdAt: { $gte: sevenDaysAgo } })
+      .sort({ views: -1 })
+      .limit(10);
+
+    res.json(trending);
+  }
+  catch(err){
+     console.error(err);
+    res.status(500).json({ error: "Failed to fetch trending properties" });
+  }
+})
+
+
 
 
 module.exports = router;

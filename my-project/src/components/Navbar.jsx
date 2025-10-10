@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import {useClerk,UserButton,useUser} from '@clerk/clerk-react'
 import { Link } from "react-router-dom";
+import ChatBot from '../pages/ChatBot';
 
 const Navbar = () =>{
     // const navigate = useNavigate()
@@ -9,16 +10,14 @@ const Navbar = () =>{
     const {openSignIn} = useClerk()
 
     return(
-         <nav className=" px-6 py-4 flex justify-between items-center shadow-md">
+         <nav className="px-6 py-4 flex justify-between items-center shadow-md">
       {/* Logo / Brand */}
       <Link to="/" className="text-xl font-bold">
         PropertyDeller 🏠
       </Link>
 
       {/* Menu Links */}
-      <div className="space-x-6">
-      </div>
-
+     
       {/* Auth Buttons */}
       <div className="space-x-4">
        {
