@@ -1,61 +1,9 @@
-// import React, { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-
-// const UserProperties = ()=>{
-//     const {id} = useParams();
-//     const [properties,setProperties] = useState([]);
-//     const [loading,setLoading] = useState(true);
-
-//     useEffect(()=>{
-//         const fetchProperties = async()=>{
-//             try{ 
-//                   const res = await fetch(`http://localhost:5000/api/property/user/${id}`);
-//                   const data = await res.json();
-//                   setProperties(data.properties || []); 
-//             }
-//             catch(err){
-//              console.error("Error fetching properties:", err);   
-//             }
-//             finally{
-//                 setLoading(false);
-//             }
-//         }
-//             if(id)fetchProperties();
-//     },[id]);
-
-//       if (loading) return <p>Loading properties...</p>;
-
-//   if (!properties.length) return <p>No saved properties found for this user.</p>;
-
-//   return(
-//     <div className="max-w-4xl mx-auto p-6">
-//         <h1 className="text-2xl font-bold mb-4">Your Saved Properties</h1>
-//         {properties.map((prop)=>(
-//             <div 
-//             key={prop._id}
-//             className="mb-4 p-4 border rounded-md shadow-sm bg-white">
-//                  <p><strong>Price:</strong> ₹{prop.predictedPrice}</p>
-//           <p><strong>Location:</strong> {prop.location}</p>
-//            <p><strong>Facing:</strong> {prop.facing || "N/A"}</p>
-//           <p><strong>Carpet Area:</strong> {prop.Carpet_Area || "N/A"} sqft</p>
-//           <p><strong>Floor:</strong> {prop.Floor || "N/A"}</p>
-//           <p><strong>Furnishing:</strong> {prop.Furnishing || "N/A"}</p>
-//           <p><strong>Bathrooms:</strong> {prop.Bathroom || "N/A"}</p>
-//           <p><strong>Balcony:</strong> {prop.Balcony || "N/A"}</p>
-//           <p><strong>Overlooking</strong> {prop.overlooking || "N/A"}</p>
-//           <p><strong>Status:</strong> {prop.Status || "N/A"}</p>
-//                 </div>
-//         ))}
-//     </div>
-//   )
-// }
-
-// export default UserProperties;
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../../../components/Layout";
 
+const API_URL = process.env.REACT_APP_API_URL;
 const UserProperties = () => {
   const { id } = useParams();
   const [properties, setProperties] = useState([]);
@@ -64,7 +12,8 @@ const UserProperties = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/property/user/${id}`);
+        const res = await fetch(`${API_URL}/property/user/${id}`);
+        // const res = await fetch(`http://localhost:5000/api/property/user/${id}`);
         const data = await res.json();
         setProperties(data.properties || []);
       } catch (err) {

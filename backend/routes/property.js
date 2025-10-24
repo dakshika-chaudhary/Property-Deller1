@@ -21,9 +21,21 @@ router.post("/predict", async (req, res) => {
       Car_Parking: req.body.carParking,
       Super_Area: req.body.superArea,
     };
+  // const response = await axios.post("https://property-deller1-1.onrender.com/predict", mlRequest);
 
-    const response = await axios.post("http://127.0.0.1:8000/predict", mlRequest);
-    res.json(response.data);
+   const response = await axios.post(
+      "https://property-deller1-1.onrender.com/predict",
+      mlRequest,
+      { headers: { "Content-Type": "application/json" } }
+    );
+    
+   const price =
+      response.data["Predicted Price (in rupees)"] ??
+      response.data.predictedPrice ??
+      response.data.predicted_price ??
+      null;
+    // const response = await axios.post("http://127.0.0.1:8000/predict", mlRequest);
+    res.json({ predictedPrice: price });
   } catch (err) {
     console.error(err.response?.data || err.message);
     res.status(500).json({ error: "Prediction failed" });
@@ -64,7 +76,8 @@ router.post("/save", async (req, res) => {
     };
 
     // Call ML API to get predicted price
-    const mlResponse = await axios.post("http://127.0.0.1:8000/predict", mlRequest);
+    // const mlResponse = await axios.post("http://127.0.0.1:8000/predict", mlRequest);
+    const mlResponse = await axios.post("https://property-deller1-1.onrender.com/predict", mlRequest);
     const predictedPrice = mlResponse.data["Predicted Price (in rupees)"] || null;
 
     // Save property to MongoDB with predicted price
@@ -131,8 +144,6 @@ sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     res.status(500).json({ error: "Failed to fetch trending properties" });
   }
 })
-
-
 
 
 module.exports = router;

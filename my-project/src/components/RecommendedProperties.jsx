@@ -6,9 +6,10 @@ const RecommendedProperties = ({userId})=>{
     useEffect(()=>{
         console.log("Fetching recommendations for:", userId);
 if(!userId) return;
-        fetch(`http://localhost:5000/api/property/recommended/${userId}`)
+        fetch(`${process.env.REACT_APP_API_URL}/api/property/recommended/${userId}`)
+        // fetch(`http://localhost:5000/api/property/recommended/${userId}`)
         .then(res => res.json())
-      .then(data => setProperties(data))
+      .then(data => setProperties(data.properties || []))
       .catch(err => console.error(err));
     },[userId]);
 
@@ -19,7 +20,11 @@ if(!userId) return;
         {properties.map(p=>(
               <div key={p._id} className="border p-3 rounded shadow hover:shadow-lg">
                  <h2 className="font-bold">{p.location}</h2>
-                 <p>Predicted Price: ₹{p.predictedPrice}</p>
+                 {/* <p>Predicted Price: ₹{p.predictedPrice}</p> */}
+                 <p>
+  Predicted Price: ₹{p.predictedPrice ? Number(p.predictedPrice).toLocaleString("en-IN") : "N/A"}
+</p>
+
                  <p>Status: {p.status}</p>
                   <p>Furnishing: {p.furnishing}</p>
                 </div>  

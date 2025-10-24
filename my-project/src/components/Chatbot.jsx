@@ -1,5 +1,7 @@
 import React, { useEffect, useRef,useState } from "react";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Chatbot = ({ userId }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
@@ -45,7 +47,8 @@ const startListening = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/chatbot/ask", {
+      const response = await fetch(`${API_URL}/api/chatbot/ask`, {
+      // const response = await fetch("http://localhost:5000/api/chatbot/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, question: query }),

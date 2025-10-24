@@ -4,6 +4,10 @@ import React, { useState } from "react";
 import Layout from "../components/Layout";
 import { useUser } from "@clerk/clerk-react";
 
+const API_URL = process.env.REACT_APP_API_URL;
+const ML_API_URL = process.env.REACT_APP_ML_API_URL;
+
+
 const Dashboard = () => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
@@ -49,19 +53,27 @@ const Dashboard = () => {
     setLoading(true);
     setPredictedPrice(null);
     try {
-      const response = await fetch("http://localhost:5000/api/property/predict", {
+      // const response = await fetch(`${API_URL}/api/property/predict`, {
+      const response = await fetch(`${ML_API_URL}/predict`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await response.json();
      let price;
-  if (data["Predicted Price (in rupees)"] !== undefined) price = data["Predicted Price (in rupees)"];
-else if (data.predictedPrice !== undefined) price = data.predictedPrice;
-else price = "N/A";
+  if (data["Predicted Price (in rupees)"] !== undefined) 
+    price = data["Predicted Price (in rupees)"];
+else if (data.predictedPrice !== undefined)
+   price = data.predictedPrice;
+else 
+  price = "N/A";
 
-setPredictedPrice(price);
+ const formattedPrice =
+      price !== "N/A" && !isNaN(price)
+        ? Math.round(Number(price)).toLocaleString()
+        : "N/A";
 
+      setPredictedPrice(formattedPrice);
       setShowFullPagePrice(true);
 
       setTimeout(() => setShowFullPagePrice(false), 3000);
@@ -84,7 +96,8 @@ setPredictedPrice(price);
     }
     try {
       const propertyData = { ...formData, userId: user?.id };
-const response = await fetch("http://localhost:5000/api/property/save", {
+      const response = await fetch(`${API_URL}/api/property/save`, {
+// const response = await fetch("http://localhost:5000/api/property/save", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(propertyData),

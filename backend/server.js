@@ -9,7 +9,15 @@ require("dotenv").config();
 connectDB();
 
 const app = express();
-app.use(cors());
+// https://property-deller1.vercel.app/
+app.use(cors({
+  origin: [
+    "http://localhost:3000",            
+    "https://property-deller1.vercel.app"
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.use("/api/property", propertyRoutes);

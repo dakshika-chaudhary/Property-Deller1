@@ -89,7 +89,8 @@ const TrendingAutoScroll = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/property/trending")
+      .get(`${process.env.REACT_APP_API_URL}/api/property/trending`)
+      // .get("http://localhost:5000/api/property/trending")
       .then((res) => setTrending(res.data))
       .catch((err) => console.error("Error fetching trending:", err))
       .finally(() => setLoading(false));
