@@ -1,58 +1,185 @@
-import React, { useEffect, useRef,useState } from "react";
+// import React, { useEffect, useRef,useState } from "react";
+
+// const API_URL = process.env.REACT_APP_API_URL;
+
+//  console.log("API_URL:", API_URL);
+// const Chatbot = ({ userId }) => {
+//   const [query, setQuery] = useState("");
+//   const [messages, setMessages] = useState([]);
+//   const [loading, setLoading] = useState(false);
+// const [listening, setListening] = useState(false);
+
+// const chatEndRef = useRef(null);
+
+// useEffect(()=>{
+//   chatEndRef.current?.scrollIntoView(
+//     {behavior:"smooth"}
+//   )
+// },[messages]);
+
+// const startListening = () => {
+//   const SpeechRecognition =
+//     window.SpeechRecognition || window.webkitSpeechRecognition;
+
+//   if (!SpeechRecognition) {
+//     alert("Your browser does not support voice input.");
+//     return;
+//   }
+//     setListening(true);
+//   const recognition =  new SpeechRecognition();
+//   recognition.lang = "en-US";
+
+//   recognition.onresult = (event) => {
+//     const transcript = event.results[0][0].transcript;
+//     setQuery(transcript)
+//     handleSend(transcript);
+//   }
+//     recognition.onend = () => setListening(false); // reset state when done
+//     recognition.start();
+// };
+
+
+//   const handleSend = async (voiceQuery) => {
+//     if (!query.trim()) return;
+//       // const finalQuery = voiceQuery || query;
+//       //   if (!finalQuery.trim()) return;
+
+//     setMessages((prev) => [...prev, { sender: "user", text: query }]);
+//     setLoading(true);
+
+//     try {
+//       const response = await fetch(`${API_URL}/api/chatbot/ask`, {
+//       // const response = await fetch("http://localhost:5000/api/chatbot/ask", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ userId, question: query }),
+//         credentials: "include",
+//       });
+//       const data = await response.json();
+
+//       setMessages((prev) => [...prev, { sender: "bot", text: data.answer }]);
+//     } catch (err) {
+//       console.error("Chatbot fetch error:", err);
+//       setMessages((prev) => [
+//         ...prev,
+//         { sender: "bot", text: "Sorry, something went wrong. Try again later." },
+//       ]);
+//     } finally {
+//       setQuery("");
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-lg p-4">
+//       <h2 className="text-2xl font-semibold text-indigo-600 mb-4">
+//         🤖 Property Assistant
+//       </h2>
+     
+
+
+//       <div className="h-80 overflow-y-auto border p-3 rounded-md mb-3 bg-gray-50">
+//         {messages.map((msg, i) => (
+//           <div
+//             key={i}
+//             className={`my-2 flex ${
+//               msg.sender === "user" ? "justify-end" : "justify-start"
+//             }`}
+//           >
+//             <div
+//   className={`p-2 rounded-xl max-w-xs ${
+//     msg.sender === "user"
+//       ? "bg-indigo-100 text-indigo-900"
+//       : "bg-green-100 text-green-900"
+//   }`}
+// >
+//   {msg.text.split('\n').map((line, idx) => (
+//     <span key={idx}>
+//       {line}
+//       <br />
+//     </span>
+//   ))}
+// </div>
+
+//           </div>
+//         ))}
+//       </div>
+// <div ref={chatEndRef}></div>
+//       <div className="flex">
+//         <input
+//           type="text"
+//           value={query}
+//           onChange={(e) => setQuery(e.target.value)}
+//           placeholder="Ask about your property or new investments..."
+//           className="flex-1 p-2 border rounded-l-md focus:ring-2 focus:ring-indigo-400"
+//         />
+//         <button
+//           onClick={handleSend}
+//           disabled={loading}
+//           className="bg-indigo-600 text-white px-4 rounded-r-md hover:bg-indigo-700"
+//         >
+//           {loading ? "Thinking..." : "Send"}
+//         </button>
+//         <button onClick={startListening}>🎤 Speak</button>
+
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Chatbot;
+
+import React, { useEffect, useRef, useState } from "react";
 
 const API_URL = process.env.REACT_APP_API_URL;
+console.log("API_URL:", API_URL);
 
- console.log("API_URL:", API_URL);
 const Chatbot = ({ userId }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-const [listening, setListening] = useState(false);
+  const [listening, setListening] = useState(false);
+  const chatEndRef = useRef(null);
 
-const chatEndRef = useRef(null);
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-useEffect(()=>{
-  chatEndRef.current?.scrollIntoView(
-    {behavior:"smooth"}
-  )
-},[messages]);
+  const startListening = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
 
-const startListening = () => {
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser does not support voice input.");
+      return;
+    }
 
-  if (!SpeechRecognition) {
-    alert("Your browser does not support voice input.");
-    return;
-  }
     setListening(true);
-  const recognition =  new SpeechRecognition();
-  recognition.lang = "en-US";
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
 
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    setQuery(transcript)
-    handleSend(transcript);
-  }
-    recognition.onend = () => setListening(false); // reset state when done
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setQuery(transcript);
+      handleSend(transcript);
+    };
+    recognition.onend = () => setListening(false);
     recognition.start();
-};
-
+  };
 
   const handleSend = async (voiceQuery) => {
-    if (!query.trim()) return;
-      // const finalQuery = voiceQuery || query;
-      //   if (!finalQuery.trim()) return;
+    const finalQuery = voiceQuery || query;
+    if (!finalQuery.trim()) return;
 
-    setMessages((prev) => [...prev, { sender: "user", text: query }]);
+    setMessages((prev) => [...prev, { sender: "user", text: finalQuery }]);
     setLoading(true);
 
     try {
       const response = await fetch(`${API_URL}/api/chatbot/ask`, {
-      // const response = await fetch("http://localhost:5000/api/chatbot/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, question: query }),
+        body: JSON.stringify({ userId, question: finalQuery }),
+        credentials: "include",
       });
       const data = await response.json();
 
@@ -70,14 +197,9 @@ const startListening = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-lg p-4">
-      <h2 className="text-2xl font-semibold text-indigo-600 mb-4">
-        🤖 Property Assistant
-      </h2>
-     
-
-
-      <div className="h-80 overflow-y-auto border p-3 rounded-md mb-3 bg-gray-50">
+    <div className="flex flex-col h-full p-4 bg-white rounded-b-2xl ">
+      {/* Chat Area */}
+      <div className="flex-1 overflow-y-auto border border-gray-200 p-3 rounded-md mb-3 bg-gray-50 ">
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -86,41 +208,44 @@ const startListening = () => {
             }`}
           >
             <div
-  className={`p-2 rounded-xl max-w-xs ${
-    msg.sender === "user"
-      ? "bg-indigo-100 text-indigo-900"
-      : "bg-green-100 text-green-900"
-  }`}
->
-  {msg.text.split('\n').map((line, idx) => (
-    <span key={idx}>
-      {line}
-      <br />
-    </span>
-  ))}
-</div>
-
+              className={`p-2 rounded-xl max-w-xs whitespace-pre-wrap ${
+                msg.sender === "user"
+                  ? "bg-indigo-100 text-indigo-900"
+                  : "bg-green-100 text-green-900"
+              }`}
+            >
+              {msg.text}
+            </div>
           </div>
         ))}
+        <div ref={chatEndRef}></div>
       </div>
-<div ref={chatEndRef}></div>
-      <div className="flex">
+
+      {/* Input Area */}
+      <div className="flex space-x-2">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask about your property or new investments..."
-          className="flex-1 p-2 border rounded-l-md focus:ring-2 focus:ring-indigo-400"
+          placeholder="Ask about your property..."
+          className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
         />
         <button
-          onClick={handleSend}
+          onClick={() => handleSend()}
           disabled={loading}
-          className="bg-indigo-600 text-white px-4 rounded-r-md hover:bg-indigo-700"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
         >
           {loading ? "Thinking..." : "Send"}
         </button>
-        <button onClick={startListening}>🎤 Speak</button>
-
+        <button
+          onClick={startListening}
+          className={`px-3 py-2 rounded-lg ${
+            listening ? "bg-green-500" : "bg-gray-300"
+          } text-white hover:opacity-80`}
+          title="Voice Input"
+        >
+          🎤
+        </button>
       </div>
     </div>
   );
