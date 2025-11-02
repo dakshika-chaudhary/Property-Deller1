@@ -6,29 +6,34 @@ const Property = require('../models/Property');
 
 router.post("/predict", async (req, res) => {
   try {
-    const mlRequest = {
-      location: req.body.location,
-      Status: req.body.status,
-      Floor: req.body.floor,
-      Transaction: req.body.transaction,
-      Furnishing: req.body.furnishing,
-      facing: req.body.facing,
-      overlooking: req.body.overlooking,
-      Ownership: req.body.ownership,
-      Carpet_Area: req.body.carpetArea,
-      Bathroom: req.body.bathroom,
-      Balcony: req.body.balcony,
-      Car_Parking: req.body.carParking,
-      Super_Area: req.body.superArea,
-    };
-  // const response = await axios.post("https://property-deller1-1.onrender.com/predict", mlRequest);
+  
+const payload = {
+  location: req.body.location,
+  Status: req.body.status,
+  Floor: req.body.floor,
+  Transaction: req.body.transaction,
+  Furnishing: req.body.furnishing,
+  facing: req.body.facing,
+  overlooking: req.body.overlooking,
+  Ownership: req.body.ownership,
+  Carpet_Area: req.body.carpet_area,
+  Bathroom: req.body.bathroom,
+  Balcony: req.body.balcony,
+  Car_Parking: req.body.car_parking,
+  Super_Area: req.body.super_area,
+};
 
-   const response = await axios.post(
-      "https://property-deller1-1.onrender.com/predict",
-      mlRequest,
-      { headers: { "Content-Type": "application/json" } }
-    );
-    
+
+// const mlResponse = await axios.post(
+//   "https://property-deller1-1.onrender.com/predict",  // or your local ML API: http://127.0.0.1:8000/predict
+//   payload,
+//   { headers: { "Content-Type": "application/json" } }
+// );
+
+    const response = await axios.post("https://property-deller1-1.onrender.com/predict", 
+      payload,{
+  headers: { "Content-Type": "application/json" },
+});
    const price =
       response.data["Predicted Price (in rupees)"] ??
       response.data.predictedPrice ??
@@ -36,82 +41,140 @@ router.post("/predict", async (req, res) => {
       null;
     // const response = await axios.post("http://127.0.0.1:8000/predict", mlRequest);
     res.json({ predictedPrice: price });
+    console.log("ML API Response:", response.data);
+
   } catch (err) {
     console.error(err.response?.data || err.message);
     res.status(500).json({ error: "Prediction failed" });
   }
 });
 
-// router.post("/predict",async(req,res)=>{
-//     try{
-//     const response = await axios.post("http://127.0.0.1:8000/predict", req.body);
-//     res.json(response.data);
-//     }
-//     catch(err){
-//     console.error(err);
-//     res.status(500).json({ error: "Prediction failed" });
-//     }
-// });
-
 router.post("/save", async (req, res) => {
   try {
-    const { userId } = req.body;
-    if (!userId) return res.status(400).json({ error: "Invalid or missing userId" });
+    const {
+      userId,
+      location,
+      status,
+      floor,
+      transaction,
+      furnishing,
+      facing,
+      overlooking,
+      ownership,
+      carpet_area,
+      bathroom,
+      balcony,
+      car_parking,
+      super_area,
+      predictedPrice,
+    } = req.body;
 
-    // Map frontend fields to ML API expected format
-    const mlRequest = {
-      location: req.body.location,
-      Status: req.body.status,           // Capital S
-      Floor: req.body.floor,
-      Transaction: req.body.transaction,
-      Furnishing: req.body.furnishing,
-      facing: req.body.facing,
-      overlooking: req.body.overlooking,
-      Ownership: req.body.ownership,
-      Carpet_Area: req.body.carpetArea,  // underscore
-      Bathroom: req.body.bathroom,
-      Balcony: req.body.balcony,
-      Car_Parking: req.body.carParking,  // underscore
-      Super_Area: req.body.superArea,    // underscore
-    };
+    // 🧩 Debug log
+    console.log("Incoming property save data:", req.body);
 
-    // Call ML API to get predicted price
-    // const mlResponse = await axios.post("http://127.0.0.1:8000/predict", mlRequest);
-    const mlResponse = await axios.post("https://property-deller1-1.onrender.com/predict", mlRequest);
-    const predictedPrice = mlResponse.data["Predicted Price (in rupees)"] || null;
+    // ✅ Validate required fields
+    if (!userId || !location) {
+      return res.status(400).json({
+        error: "userId and location are required",
+        received: { userId, location },
+      });
+    }
 
-    // Save property to MongoDB with predicted price
+    // ✅ Create and save the property
     const property = new Property({
-      ...req.body,       // includes userId and form fields
-      predictedPrice,    // add predicted price
+      userId,
+      location,
+      status: status || "Unknown",
+      floor: floor || "Unknown",
+      transaction: transaction || "Unknown",
+      furnishing: furnishing || "Unknown",
+      facing: facing || "Unknown",
+      overlooking: overlooking || "Unknown",
+      ownership: ownership || "Unknown",
+      carpet_area: Number(carpet_area) || 0,
+      bathroom: Number(bathroom) || 0,
+      balcony: Number(balcony) || 0,
+      car_parking: Number(car_parking) || 0,
+      super_area: Number(super_area) || 0,
+      predictedPrice: Number(predictedPrice) || 0,
     });
 
     await property.save();
+    console.log("✅ Property saved successfully:", property);
 
-    res.json({ message: "Property saved successfully", property });
+    res.status(201).json({
+      message: "✅ Property saved successfully",
+      property,
+    });
   } catch (err) {
-    console.error("Error saving property:", err.response?.data || err.message);
-    res.status(500).json({ error: "Saving failed" });
+    console.error("❌ Error saving property:", err);
+    res.status(500).json({
+      error: "Saving failed",
+      details: err.message || err,
+    });
   }
 });
 
-module.exports = router;
 
+// router.post("/save", async (req, res) => {
+//   try {
+//     const {
+//       userId,
+//       location,
+//       status,
+//       floor,
+//       transaction,
+//       furnishing,
+//       facing,
+//       overlooking,
+//       ownership,
+//       carpet_area,
+//       bathroom,
+//       balcony,
+//       car_parking,
+//       super_area,
+//       predictedPrice,
+//     } = req.body;
 
-// router.post("/save",async(req,res)=>{
-//     try{
-//     const { userId } = req.body;
-//     if (!userId) return res.status(400).json({ error: "Invalid or missing userId" });
-
-//        const property = new Property(req.body);
-//        await property.save();
-//        res.json({ message: "Property saved successfully", property });
+//     // ✅ Check required fields first
+//     if (!userId || !location) {
+//       return res.status(400).json({ error: "userId and location are required" });
 //     }
-//     catch(err){
-//             console.error("Error saving:", err);
-//        res.status(500).json({ error: "Saving failed" }); 
-//     }
-// })
+
+//     const property = new Property({
+//       userId,
+//       location,
+//       status,
+//       floor,
+//       transaction,
+//       furnishing,
+//       facing,
+//       overlooking,
+//       ownership,
+//       carpet_area,
+//       bathroom,
+//       balcony,
+//       car_parking,
+//       super_area,
+//       predictedPrice,
+//     });
+
+//     await property.save();
+
+//     res.status(201).json({
+//       message: "✅ Property saved successfully",
+//       property,
+//     });
+//   } catch (err) {
+//     console.error("Error saving property:", err);
+//     res.status(500).json({
+//       error: "Saving failed",
+//       details: err.message,
+//     });
+//   }
+// });
+
+
 
 // GET properties by userId
 router.get("/user/:userId", async (req, res) => {

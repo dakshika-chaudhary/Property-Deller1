@@ -11,20 +11,21 @@ const ML_API_URL = process.env.REACT_APP_ML_API_URL;
 const Dashboard = () => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
-    location: "",
-    status: "",
-    floor: "",
-    transaction: "",
-    furnishing: "",
-    facing: "",
-    overlooking: "",
-    ownership: "",
-    carpetArea: "",
-    bathroom: "",
-    balcony: "",
-    carParking: "",
-    superArea: "",
-  });
+  location: "",
+  status: "",
+  floor: "",
+  transaction: "",
+  furnishing: "",
+  facing: "",
+  overlooking: "",
+  ownership: "",
+  carpet_area: "",   // ✅ use snake_case
+  bathroom: "",
+  balcony: "",
+  car_parking: "",   // ✅
+  super_area: "",    // ✅
+});
+
 
   const [predictedPrice, setPredictedPrice] = useState(null);
   const [showFullPagePrice, setShowFullPagePrice] = useState(false);
@@ -48,71 +49,167 @@ const Dashboard = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+const handlePredict = async () => {
+  setLoading(true);
+  setPredictedPrice(null);
 
-  const handlePredict = async () => {
-    setLoading(true);
-    setPredictedPrice(null);
-    try {
-      // const response = await fetch(`${API_URL}/api/property/predict`, {
-      const response = await fetch(`${ML_API_URL}/predict`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
-     let price;
-  if (data["Predicted Price (in rupees)"] !== undefined) 
-    price = data["Predicted Price (in rupees)"];
-else if (data.predictedPrice !== undefined)
-   price = data.predictedPrice;
-else 
-  price = "N/A";
+  try {
+    // Convert numeric inputs to numbers before sending to ML API
+    const formattedData = {
+  location: formData.location || "Unknown",
+  Status: formData.status || "Unknown",
+  Floor: formData.floor || "Unknown",
+  Transaction: formData.transaction || "Unknown",
+  Furnishing: formData.furnishing || "Unknown",
+  facing: formData.facing || "Unknown",
+  overlooking: formData.overlooking || "Unknown",
+  Ownership: formData.ownership || "Unknown",
+  Carpet_Area: formData.carpet_area ? Number(formData.carpet_area) : 0,
+  Bathroom: formData.bathroom ? Number(formData.bathroom) : 0,
+  Balcony: formData.balcony ? Number(formData.balcony) : 0,
+  Car_Parking: formData.car_parking ? Number(formData.car_parking) : 0,
+  Super_Area: formData.super_area ? Number(formData.super_area) : 0,
+};
 
- const formattedPrice =
+//  const formattedData = {
+//   location: formData.location || "Unknown",
+//   status: formData.status || "Unknown",
+//   floor: formData.floor || "Unknown",
+//   transaction: formData.transaction || "Unknown",
+//   furnishing: formData.furnishing || "Unknown",
+//   facing: formData.facing || "Unknown",
+//   overlooking: formData.overlooking || "Unknown",
+//   ownership: formData.ownership || "Unknown",
+//   carpet_area: formData.carpet_area ? Number(formData.carpet_area) : 0,
+//   bathroom: formData.bathroom ? Number(formData.bathroom) : 0,
+//   balcony: formData.balcony ? Number(formData.balcony) : 0,
+//   car_parking: formData.car_parking ? Number(formData.car_parking) : 0,
+//   super_area: formData.super_area ? Number(formData.super_area) : 0,
+// };
+
+
+
+console.log("Payload to ML API:", JSON.stringify(formattedData, null, 2));
+
+
+    const response = await fetch(`${ML_API_URL}/predict`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formattedData),
+    });
+
+    const data = await response.json();
+
+    console.log("Response from ML API:", data);
+
+    let price;
+    if (data["Predicted Price (in rupees)"] !== undefined)
+      price = data["Predicted Price (in rupees)"];
+    else if (data.predictedPrice !== undefined)
+      price = data.predictedPrice;
+    else
+      price = "N/A";
+
+    const formattedPrice =
       price !== "N/A" && !isNaN(price)
         ? Math.round(Number(price)).toLocaleString()
         : "N/A";
 
-      setPredictedPrice(formattedPrice);
-      setShowFullPagePrice(true);
+    setPredictedPrice(formattedPrice);
+    setShowFullPagePrice(true);
 
-      setTimeout(() => setShowFullPagePrice(false), 3000);
-    } catch (err) {
-      console.error("Prediction error:", err);
-      alert("Error connecting to the API. Please check your server.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Hide popup after 3 seconds
+    setTimeout(() => setShowFullPagePrice(false), 3000);
+  } catch (err) {
+    console.error("Prediction error:", err);
+    alert("Error connecting to the API. Please check your server.");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleSave = async () => {
-    if (!predictedPrice) {
-      alert("Please predict the price first!");
-      return;
-    }
-    if (!user?.id) {
-      alert("❌ User not loaded or not signed in. Cannot save property.");
-      return;
-    }
-    try {
-      const propertyData = { ...formData, userId: user?.id };
-      const response = await fetch(`${API_URL}/api/property/save`, {
-// const response = await fetch("http://localhost:5000/api/property/save", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(propertyData),
-});
+//   const handlePredict = async () => {
+//     setLoading(true);
+//     setPredictedPrice(null);
+//     try {
+//       // const response = await fetch(`${API_URL}/api/property/predict`, {
+//       const response = await fetch(`${ML_API_URL}/predict`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(formData),
+//       });
+//       const data = await response.json();
+//      let price;
+//   if (data["Predicted Price (in rupees)"] !== undefined) 
+//     price = data["Predicted Price (in rupees)"];
+// else if (data.predictedPrice !== undefined)
+//    price = data.predictedPrice;
+// else 
+//   price = "N/A";
 
+//  const formattedPrice =
+//       price !== "N/A" && !isNaN(price)
+//         ? Math.round(Number(price)).toLocaleString()
+//         : "N/A";
 
+//       setPredictedPrice(formattedPrice);
+//       setShowFullPagePrice(true);
 
-      const data = await response.json();
-      if (response.ok) alert("✅ Property saved successfully!");
-      else alert("❌ Failed to save property: " + data.error);
-    } catch (err) {
-      console.error("Error saving property:", err);
-      alert("Error saving property. Please check your server.");
-    }
-  };
+//       setTimeout(() => setShowFullPagePrice(false), 3000);
+//     } catch (err) {
+//       console.error("Prediction error:", err);
+//       alert("Error connecting to the API. Please check your server.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+const handleSave = async () => {
+  if (!predictedPrice) {
+    alert("Please predict the price first!");
+    return;
+  }
+  if (!user?.id) {
+    alert("❌ User not loaded or not signed in. Cannot save property.");
+    return;
+  }
+
+  try {
+    const propertyData = {
+      userId: user.id,
+      location: formData.location,
+      status: formData.status || "Unknown",
+      floor: formData.floor || "Unknown",
+      transaction: formData.transaction || "Unknown",
+      furnishing: formData.furnishing || "Unknown",
+      facing: formData.facing || "Unknown",
+      overlooking: formData.overlooking || "Unknown",
+      ownership: formData.ownership || "Unknown",
+      carpet_area: Number(formData.carpet_area) || 0,
+      bathroom: Number(formData.bathroom) || 0,
+      balcony: Number(formData.balcony) || 0,
+      car_parking: Number(formData.car_parking) || 0,
+      super_area: Number(formData.super_area) || 0,
+      predictedPrice: Number(predictedPrice.replace(/,/g, "")),
+    };
+
+    console.log("Payload to /save API:", propertyData);
+
+    const response = await fetch(`${API_URL}/api/property/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(propertyData),
+    });
+
+    const data = await response.json();
+    if (response.ok) alert("✅ Property saved successfully!");
+    else alert("❌ Failed to save property: " + data.error);
+  } catch (err) {
+    console.error("Error saving property:", err);
+    alert("Error saving property. Please check your server.");
+  }
+};
+
 
   // Keys that should render as <select>
   const selectFields = {
@@ -125,7 +222,8 @@ else
   };
 
   // Keys that should render as number inputs
-  const numberFields = ["carpetArea", "bathroom", "balcony", "carParking", "superArea"];
+const numberFields = ["carpet_area", "bathroom", "balcony", "car_parking", "super_area"];
+
 
   return (
     <Layout>
