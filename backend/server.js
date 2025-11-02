@@ -1,22 +1,35 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
+
 const connectDB = require("./db");
 const propertyRoutes = require("./routes/property");
 const chatbotRoutes = require("./routes/chatbot");
 
-require("dotenv").config();
+ require("dotenv").config();
+
 connectDB();
 
 const app = express();
 // https://property-deller1.vercel.app/
+// app.use(cors({
+//   origin: [
+//     "http://localhost:3000",            
+//     "https://property-deller1.vercel.app"
+//   ],
+//   credentials: true
+// }));
+const cors = require("cors");
+
 app.use(cors({
   origin: [
-    "http://localhost:3000",            
-    "https://property-deller1.vercel.app"
+    "http://localhost:3000",               // for local dev
+    "https://property-deller1.vercel.app"  // for deployed frontend
   ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
+
 
 app.use(express.json());
 

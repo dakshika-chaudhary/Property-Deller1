@@ -2,6 +2,7 @@ import React, { useEffect, useRef,useState } from "react";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+ console.log("API_URL:", API_URL);
 const Chatbot = ({ userId }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
@@ -57,7 +58,7 @@ const startListening = () => {
 
       setMessages((prev) => [...prev, { sender: "bot", text: data.answer }]);
     } catch (err) {
-      console.error(err);
+      console.error("Chatbot fetch error:", err);
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "Sorry, something went wrong. Try again later." },
@@ -73,6 +74,8 @@ const startListening = () => {
       <h2 className="text-2xl font-semibold text-indigo-600 mb-4">
         🤖 Property Assistant
       </h2>
+     
+
 
       <div className="h-80 overflow-y-auto border p-3 rounded-md mb-3 bg-gray-50">
         {messages.map((msg, i) => (

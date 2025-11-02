@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Home from './pages/Home';
 import Layout from './components/Layout';
 import UserProperties from './pages/properties/[id]/page';
-import ChatBot from './pages/ChatBot';
+import ChatBot from './components/Chatbot'
 import Plan from './pages/Subscription';
 import About from './pages/About';
 

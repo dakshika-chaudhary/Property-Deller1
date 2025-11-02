@@ -1,6 +1,6 @@
 // src/components/FloatingChatBot.jsx
 import { useState } from "react";
-import ChatBot from "../pages/ChatBot";
+import ChatBot from "./Chatbot"
 
 const FloatingChatBot = () => {
   const [open, setOpen] = useState(false);

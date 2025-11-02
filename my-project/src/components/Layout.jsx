@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import ChatBot from "../pages/ChatBot";
+// import ChatBot from "./Chatbot.jsx";
 import FloatingChatBot from "./FloatingChatBot";
 
 const Layout = ({ children }) => {
