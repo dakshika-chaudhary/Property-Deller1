@@ -23,7 +23,8 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",               // for local dev
-    "https://property-deller1.vercel.app"  // for deployed frontend
+    // "https://property-deller1.vercel.app"  // for deployed frontend
+    "https://property-deller1-xr3z.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
