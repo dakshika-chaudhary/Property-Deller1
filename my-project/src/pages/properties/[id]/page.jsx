@@ -12,7 +12,7 @@ const UserProperties = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const res = await fetch(`${API_URL}/property/user/${id}`);
+        const res = await fetch(`${API_URL}/api/property/user/${id}`);
         // const res = await fetch(`http://localhost:5000/api/property/user/${id}`);
         const data = await res.json();
         setProperties(data.properties || []);

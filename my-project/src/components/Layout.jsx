@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
     {
       name: "Properties",
       icon: <FaBuilding />,
-      path: userId ? `/properties/${userId}` : "#",
+      path: userId ? `/properties/${userId}` : "/properties/${userId}/page.jsx",
     },
    
     { name: "Profile", icon: <FaUser />, path: "/profile" },
