@@ -30,9 +30,9 @@ const Layout = ({ children }) => {
       path: userId ? `/properties/${userId}` : "/properties/${userId}/page.jsx",
     },
    
-    { name: "Profile", icon: <FaUser />, path: "/profile" },
+    
     { name: "Subscription", icon: <FaDollarSign />, path: "/subscription" },
-    { name: "Settings", icon: <FaCog />, path: "/settings" },
+   
     { name: "About", icon: <FaInfoCircle />, path: "/about" },
   ];
 
