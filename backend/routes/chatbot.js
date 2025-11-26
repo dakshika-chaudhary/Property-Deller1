@@ -169,16 +169,52 @@ router.post("/ask", async (req, res) => {
     // -----------------------------
     // CREATE PROMPT
     // -----------------------------
-    const prompt = `
+//     const prompt = `
+// You are PropertyDeller's intelligent property assistant.
+// The user has the following properties: ${JSON.stringify(userProperties)}.
+// Market data sample: ${JSON.stringify(marketData.slice(0, 20))}.
+// Answer the user's question in a helpful, friendly, and concise way.
+// - Do not use bold, italics, or Markdown.
+// - Maintain clear and readable alignment.
+// - Use numbered points or bullet lists.
+// - Include details: Price, Location, Carpet Area, Floor, Furnishing, Bathrooms, Balcony, Car Parking, and Status.
+// - Provide complete answers; if tokens exceed, summarize neatly.
+// User's question: "${question}"
+// `;
+
+
+const prompt = `
 You are PropertyDeller's intelligent property assistant.
-The user has the following properties: ${JSON.stringify(userProperties)}.
+
+The user's saved properties: ${JSON.stringify(userProperties)}.
 Market data sample: ${JSON.stringify(marketData.slice(0, 20))}.
-Answer the user's question in a helpful, friendly, and concise way.
-- Do not use bold, italics, or Markdown.
-- Maintain clear and readable alignment.
-- Use numbered points or bullet lists.
-- Include details: Price, Location, Carpet Area, Floor, Furnishing, Bathrooms, Balcony, Car Parking, and Status.
-- Provide complete answers; if tokens exceed, summarize neatly.
+
+If the user asks:
+- "show my properties"
+- "list saved properties"
+- "what properties have I saved"
+- "my stored properties"
+
+THEN respond ONLY with a clear list of the user's saved properties in this format:
+
+1) Location: ...
+   Price: ...
+   Floor: ...
+   Furnishing: ...
+   Carpet Area: ...
+   Bathrooms: ...
+   Balcony: ...
+   Car Parking: ...
+   Status: ...
+
+If the user has NO saved properties, respond:
+"You have no saved properties yet."
+
+For any other type of question, answer normally using userProperties + market data.
+
+Do not use bold, italics, or Markdown.
+Always respond in clean bullet or numbered format.
+
 User's question: "${question}"
 `;
 
